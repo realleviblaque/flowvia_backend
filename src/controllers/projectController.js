@@ -225,9 +225,69 @@ const getOpenProjects = async (req, res) => {
   }
 };
 
+const searchProjects = async (req, res) => {
+  try {
+    const {
+      keyword,
+      projectType,
+      status,
+      minBudget,
+      maxBudget,
+      skill
+    } = req.query;
+
+    const query = {};
+
+    if (keyword) {
+      query.$or = [
+        { title: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } }
+      ];
+    }
+
+    if (projectType) {
+      query.projectType = projectType;
+    }
+
+    if (status) {
+      query.status = status;
+    }
+
+    if (skill) {
+      query.skillsRequired = { $regex: skill, $options: "i" };
+    }
+
+    if (minBudget || maxBudget) {
+      query.budget = {};
+
+      if (minBudget) query.budget.$gte = Number(minBudget);
+      if (maxBudget) query.budget.$lte = Number(maxBudget);
+    }
+
+    const projects = await Project.find(query)
+      .populate("owner", "fullName username email profilePicture")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: projects.length,
+      projects
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   createProject,
   getProjectById,
   updateProject,
-  deleteProject
+  deleteProject,
+  getAllProjects,
+  getMyProjects,
+  getOpenProjects,
+  searchProjects
 };
