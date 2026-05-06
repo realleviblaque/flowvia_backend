@@ -7,6 +7,7 @@ const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
 const statusRoutes = require("./routes/statusRoutes");
+const bookmarkRoutes = require("./routes/bookmarkRoutes");
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.use("/users", userRoutes);
 app.use("/projects", projectRoutes);
 app.use("/applications", applicationRoutes);
 app.use("/status", statusRoutes);
+app.use("/bookmarks", bookmarkRoutes);
 
 module.exports = app;
